@@ -38,8 +38,8 @@ export const NavItemComponent = ({
   const isDefaultItem = item.label === "Default";
   const isOrdersItem = item.label === "Orders";
   const itemKey = `${sectionTitle}-${item.label}`;
-  // Check special items
-  const isDKP = item.label === "Destination KP";
+  // Check if item is text-only (no logo and no icon)
+  const isTextOnly = !item.logo && !item.icon;
   const isDashboard = item.label === "Dashboard";
 
   const isRouteItem = Boolean(item.href);
@@ -75,7 +75,7 @@ export const NavItemComponent = ({
   const isExpandable = Boolean(item.children?.length);
   const isItemExpanded = isExpandable ? isExpanded : false;
   const isHighlighted = isItemActive || isItemExpanded;
-  const containerBase = `relative flex items-center rounded-md ${isDashboard ? "py-6" : "py-2"} text-sm font-medium transition-all ${
+  const containerBase = `relative flex items-center rounded-md ${isTextOnly ? "py-4" : "py-2"} text-sm font-medium transition-all ${
     isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"
   }`;
 
@@ -114,7 +114,7 @@ export const NavItemComponent = ({
       <motion.button
         type="button"
         className={`${containerBase} ${stateClasses} cursor-pointer ${
-          item.logo || isDKP || isDashboard ? "justify-center" : ""
+          item.logo || isTextOnly ? "justify-center" : ""
         }`}
         onClick={handleClick}
         aria-expanded={isExpandable ? isItemExpanded : undefined}
@@ -131,10 +131,10 @@ export const NavItemComponent = ({
           />
         ) : null}
         {chevronMarkup}
-        {(!isDashboard || !isSidebarOpen) && (
+        {(!isTextOnly || !isSidebarOpen) && (
           <span
             className={`relative z-10 flex items-center justify-center rounded-md ${
-              !item.logo && !isDKP ? iconClasses : ""
+              !item.logo && !isTextOnly ? iconClasses : ""
             } ${iconOffsetClass}`}
           >
             {item.logo ? (
@@ -145,21 +145,25 @@ export const NavItemComponent = ({
                   isSidebarOpen ? "w-auto max-w-[170px]" : "w-16"
                 }`}
               />
-            ) : isDKP ? (
-              <span className="text-lg font-semibold">DKP</span>
-            ) : isDashboard ? (
-              <span className="text-lg font-semibold">DB</span>
+            ) : isTextOnly ? (
+              <span className="text-lg font-semibold">
+                {item.label
+                  .split(" ")
+                  .map((w) => w[0])
+                  .join("")}
+              </span>
             ) : item.icon ? (
               <item.icon />
             ) : null}
           </span>
         )}
-        {isSidebarOpen && !item.logo && !isDKP ? (
-          <span
-            className={`relative z-10 whitespace-nowrap text-center ${
-              isDashboard ? "text-2xl " : "text-sm "
-            }`}
-          >
+        {isSidebarOpen && !item.logo && isTextOnly ? (
+          <span className="relative z-10 whitespace-nowrap text-center text-xl">
+            {item.label}
+          </span>
+        ) : null}
+        {isSidebarOpen && !item.logo && !isTextOnly ? (
+          <span className="relative z-10 whitespace-nowrap text-center text-sm">
             {item.label}
           </span>
         ) : null}
