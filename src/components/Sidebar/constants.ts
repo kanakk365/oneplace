@@ -61,7 +61,7 @@ export const getInitialActiveItemKey = (pathname: string) => {
   for (const section of navSections) {
     for (const item of section.items) {
       const itemKey = `${section.title}-${item.label}`;
-      if (item.href && item.href === pathname) {
+      if (item.href && (pathname === item.href || pathname.startsWith(item.href + "/"))) {
         return itemKey;
       }
       if (item.active) {

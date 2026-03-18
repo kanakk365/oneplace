@@ -44,7 +44,7 @@ export const NavItemComponent = ({
 
   const isRouteItem = Boolean(item.href);
   const isItemActive = isRouteItem
-    ? item.href === pathname
+    ? pathname === item.href || pathname.startsWith(item.href + "/")
     : activeItemKey === itemKey;
 
   if (isDotNav) {
